@@ -1,0 +1,31 @@
+# Data handling
+pandas
+numpy
+
+# Visualization
+matplotlib
+seaborn
+
+# Machine Learning
+scikit-learn
+xgboost
+
+# Model Explainability
+shap
+
+# Database
+sqlite-utils
+
+# API (for later integration)
+fastapi
+uvicorn
+
+# Validation
+pydantic
+
+# Notebook support
+jupyter
+ipykernel
+
+# Utility
+joblib
