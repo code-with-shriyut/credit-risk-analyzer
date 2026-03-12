@@ -7,3 +7,4 @@ __pycache__/
 *.db
 data/raw/*.csv 
 data/raw/*.zip
+data/processed/*.csv
