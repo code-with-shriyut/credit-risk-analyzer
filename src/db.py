@@ -1,62 +1,46 @@
-import sqlite3
+import os
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker, Session
 
-DB_PATH = "data/loan_applications.db"
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# Main database engine — connects to Supabase PostgreSQL
+engine = create_engine(DATABASE_URL)
+
+# Session factory — creates a new session for each request
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def insert_loan_application(
-    name,
-    age,
-    monthly_income,
-    loan_amount,
-    tenure_months,
-    annual_interest_rate,
-    credit_score,
-    months_employed,
-    emi,
-    emi_ratio,
-    risk_category,
-    decision
-):
-    """
-    Insert a single loan application into the database.
-    """
+def get_db():
+    """FastAPI dependency — yields a DB session per request, closes after use."""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
 
-    cursor.execute(
-        """
-        INSERT INTO loan_applications (
-            name,
-            age,
-            monthly_income,
-            loan_amount,
-            tenure_months,
-            annual_interest_rate,
-            credit_score,
-            months_employed,
-            emi,
-            emi_ratio,
-            risk_category,
-            decision
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
-            name,
-            age,
-            monthly_income,
-            loan_amount,
-            tenure_months,
-            annual_interest_rate,
-            credit_score,
-            months_employed,
-            emi,
-            emi_ratio,
-            risk_category,
-            decision
-        )
+def get_user(db: Session, username: str):
+    """Fetch user from DB by username — used during login."""
+    result = db.execute(
+        text("SELECT * FROM users WHERE username = :username"),
+        {"username": username}
+    ).fetchone()
+    return result
+
+
+def save_loan_application(db: Session, data: dict):
+    """Insert a loan application record into the database after prediction."""
+    db.execute(
+        text("""
+            INSERT INTO loan_applications 
+            (application_id, full_name, decision, risk_category, default_probability, processed_by)
+            VALUES 
+            (:application_id, :full_name, :decision, :risk_category, :default_probability, :processed_by)
+        """),
+        data
     )
-
-    conn.commit()
-    conn.close()
+    db.commit()
