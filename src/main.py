@@ -5,11 +5,11 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from schemas import LoanApplication, PredictionResponse, Token, SHAPFactor
-from auth import verify_password, create_access_token, decode_token
-from db import get_db, get_user, save_loan_application
-from ml_model import predict
-from risk import risk_classification
+from src.schemas import LoanApplication, PredictionResponse, Token, SHAPFactor
+from src.auth import verify_password, create_access_token, decode_token
+from src.db import get_db, get_user, save_loan_application
+from src.ml_model import predict
+from src.risk import risk_classification
 
 app = FastAPI(
     title="Credit Risk Analyzer API",
