@@ -7,7 +7,6 @@ API_URL = "http://127.0.0.1:8000"
 
 st.set_page_config(page_title="Dashboard", page_icon="📈", layout="wide")
 
-# redirect if not logged in
 if "token" not in st.session_state:
     st.warning("Please login first!")
     st.switch_page("app.py")
@@ -16,35 +15,59 @@ st.title("📈 Bank Manager Dashboard")
 st.caption(f"Logged in as: {st.session_state.get('username', '')} | Role: {st.session_state.get('role', '')}")
 st.divider()
 
-# fetch data from supabase directly via API
 headers = {"Authorization": f"Bearer {st.session_state['token']}"}
+response = requests.get(f"{API_URL}/applications", headers=headers)
 
-# for now show session result if available
-if "result" in st.session_state:
-    result = st.session_state["result"]
+if response.status_code == 200:
+    data = response.json()
+    applications = data["applications"]
+    total = data["total"]
+    df = pd.DataFrame(applications)
 
-    st.subheader("Latest Application")
+    # stats
+    approved = len(df[df["decision"] == "APPROVED"])
+    rejected = len(df[df["decision"] == "REJECTED"])
+    approval_rate = round((approved / total) * 100, 1) if total > 0 else 0
+    avg_prob = round(df["default_probability"].mean() * 100, 1)
+
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Application ID", result["application_id"])
-    col2.metric("Decision", result["decision"])
-    col3.metric("Risk Category", result["risk_category"])
-    col4.metric("Default Probability", f"{result['default_probability']*100:.1f}%")
+    col1.metric("Total Applications", total)
+    col2.metric("Approved", approved)
+    col3.metric("Approval Rate", f"{approval_rate}%")
+    col4.metric("Avg Default Probability", f"{avg_prob}%")
 
     st.divider()
 
-st.subheader("Quick Stats")
-col1, col2, col3 = st.columns(3)
-col1.metric("Total Applications", "Coming Soon")
-col2.metric("Approval Rate", "Coming Soon")
-col3.metric("Avg Default Probability", "Coming Soon")
+    # charts
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("Decision Distribution")
+        decision_counts = df["decision"].value_counts().reset_index()
+        decision_counts.columns = ["Decision", "Count"]
+        fig1 = px.pie(decision_counts, names="Decision", values="Count",
+                     color_discrete_map={"APPROVED": "green", "REJECTED": "red"})
+        st.plotly_chart(fig1, use_container_width=True)
+
+    with col2:
+        st.subheader("Risk Category Distribution")
+        risk_counts = df["risk_category"].value_counts().reset_index()
+        risk_counts.columns = ["Risk", "Count"]
+        fig2 = px.bar(risk_counts, x="Risk", y="Count",
+                     color="Risk", color_discrete_map={
+                         "LOW RISK": "green",
+                         "MEDIUM RISK": "orange",
+                         "HIGH RISK": "red"
+                     })
+        st.plotly_chart(fig2, use_container_width=True)
+
+    st.divider()
+    st.subheader("All Applications")
+    st.dataframe(df, use_container_width=True)
+
+else:
+    st.error("Failed to fetch applications!")
 
 st.divider()
-
-st.subheader("Risk Distribution")
-st.info("Connect /applications endpoint to see full dashboard with charts.")
-
-st.divider()
-
 if st.button("New Application", use_container_width=True):
     st.switch_page("pages/1_Loan_Form.py")
-    
