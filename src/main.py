@@ -10,6 +10,7 @@ from src.auth import verify_password, create_access_token, decode_token
 from src.db import get_db, get_user, save_loan_application
 from src.ml_model import predict
 from src.risk import risk_classification
+from sqlalchemy import text
 
 app = FastAPI(
     title="Credit Risk Analyzer API",
@@ -35,6 +36,28 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
     token = create_access_token({"sub": user.username, "role": user.role})
     return {"access_token": token, "token_type": "bearer", "role": user.role}
+
+@app.get("/applications")
+def get_applications(
+    current_user: dict = Depends(decode_token),
+    db: Session = Depends(get_db)
+):
+    """Fetch all loan applications for dashboard."""
+    result = db.execute(text("SELECT * FROM loan_applications ORDER BY created_at DESC")).fetchall()
+    
+    applications = []
+    for row in result:
+        applications.append({
+            "application_id": row.application_id,
+            "full_name": row.full_name,
+            "decision": row.decision,
+            "risk_category": row.risk_category,
+            "default_probability": row.default_probability,
+            "processed_by": row.processed_by,
+            "created_at": str(row.created_at)
+        })
+    
+    return {"applications": applications, "total": len(applications)}
 
 
 @app.post("/predict", response_model=PredictionResponse)
