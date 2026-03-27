@@ -96,13 +96,21 @@ def predict_default(
     if rule_risk == "HIGH RISK":
         final_risk = "HIGH RISK"
         decision = "REJECTED"
+
     elif rule_risk == "LOW RISK" and result["default_probability"] < 0.3:
         final_risk = "LOW RISK"
         decision = "APPROVED"
-    else:
-        final_risk = result["risk_label"]
+
+    elif rule_risk == "MEDIUM RISK":
+        # 🔥 THIS IS THE FIX
+        final_risk = "MEDIUM RISK"
         decision = "APPROVED" if result["prediction"] == 0 else "REJECTED"
 
+    else:
+        # fallback (rare case)
+        final_risk = result["risk_label"]
+        decision = "APPROVED" if result["prediction"] == 0 else "REJECTED"
+        
     application_id = str(uuid.uuid4())[:8].upper()
 
     save_loan_application(db, {
