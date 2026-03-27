@@ -22,7 +22,7 @@ app = FastAPI(
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "timestamp": datetime.utcnow()}
+    return {"status": "ok", "timestamp": datetime.now(timezone.utc)}
 
 
 @app.post("/login", response_model=Token)
@@ -118,7 +118,7 @@ def predict_default(
 
     return PredictionResponse(
         application_id=application_id,
-        timestamp = datetime.now(timezone.utc)
+        timestamp = datetime.now(timezone.utc),
         decision=decision,
         risk_category=final_risk,
         default_probability=result["default_probability"],
