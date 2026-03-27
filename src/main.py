@@ -1,5 +1,6 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
+
 
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
@@ -117,7 +118,7 @@ def predict_default(
 
     return PredictionResponse(
         application_id=application_id,
-        timestamp=datetime.utcnow(),
+        timestamp = datetime.now(timezone.utc)
         decision=decision,
         risk_category=final_risk,
         default_probability=result["default_probability"],
