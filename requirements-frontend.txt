@@ -1,0 +1,6 @@
+streamlit==1.39.0
+matplotlib==3.9.2
+seaborn==0.13.2
+plotly
+pandas
+numpy
