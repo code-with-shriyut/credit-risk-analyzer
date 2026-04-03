@@ -6,7 +6,9 @@
 
 ## 📌 Problem Statement
 
-Over **190 million thin-file borrowers** in India lack formal credit history, making them invisible to traditional credit scoring systems. This project addresses **credit invisibility** by building an ML-powered loan default prediction system that uses alternative data sources (external scores, employment history, asset ownership) to evaluate creditworthiness — enabling fairer, data-driven lending decisions.
+Traditional credit scoring systems rely heavily on historical credit bureau data, making it difficult to assess borrowers with limited or no credit history (thin-file users).
+
+This project builds a machine learning–driven credit risk assessment system that uses alternative financial and behavioral features (income, employment stability, external risk scores) to evaluate borrower risk — enabling more inclusive and data-driven lending decisions.
 
 ---
 
