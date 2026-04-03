@@ -8,5 +8,4 @@ __pycache__/
 data/raw/*.csv 
 data/raw/*.zip
 data/processed/*.csv
-models/*.pkl
 .env
