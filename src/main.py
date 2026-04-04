@@ -27,37 +27,41 @@ def health():
 
 @app.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user_data = dict(user._mapping) if user else {}
+    
+    # STEP 1: user fetch करो
+    user = get_user(db, form_data.username)
 
-    hashed_password = (
-            user_data.get("hashed_password")
-            or user_data.get("password")
-            or user_data.get("HASHED_PASSWORD")
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid username"
         )
 
-    username = user_data.get("username") or user_data.get("USERNAME")
-    role = user_data.get("role") or user_data.get("ROLE")
+    # STEP 2: mapping
+    user_data = dict(user._mapping)
 
-    from src.auth import verify_password
+    hashed_password = user_data.get("hashed_password")
+    username = user_data.get("username")
+    role = user_data.get("role")
 
-    print("VERIFY:", verify_password(form_data.password, hashed_password))
+    # STEP 3: password verify
+    if not verify_password(form_data.password, hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid password"
+        )
 
-    if not user or not verify_password(form_data.password, hashed_password):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid username or password"
-            )
-
+    # STEP 4: token
     token = create_access_token({
-            "sub": username,
-            "role": role
-        })
+        "sub": username,
+        "role": role
+    })
 
     return {
-            "access_token": token,
-            "token_type": "bearer",
-            "role": role
-        }
+        "access_token": token,
+        "token_type": "bearer",
+        "role": role
+    }
 @app.get("/applications")
 def get_applications(
     current_user: dict = Depends(decode_token),
