@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from streamlit import user
 
 from src.schemas import LoanApplication, PredictionResponse, Token, SHAPFactor
 from src.auth import verify_password, create_access_token, decode_token
@@ -27,27 +28,37 @@ def health():
 
 @app.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = get_user(db, form_data.username)
+    user_data = dict(user._mapping) if user else {}
 
-    if not user or not verify_password(
-        form_data.password,
-        user._mapping["hashed_password"]
-    ):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid username or password"
+    hashed_password = (
+            user_data.get("hashed_password")
+            or user_data.get("password")
+            or user_data.get("HASHED_PASSWORD")
         )
 
+    username = user_data.get("username") or user_data.get("USERNAME")
+    role = user_data.get("role") or user_data.get("ROLE")
+
+    from src.auth import verify_password
+
+    print("VERIFY:", verify_password(form_data.password, hashed_password))
+
+    if not user or not verify_password(form_data.password, hashed_password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid username or password"
+            )
+
     token = create_access_token({
-        "sub": user._mapping["username"],
-        "role": user._mapping["role"]
-    })
+            "sub": username,
+            "role": role
+        })
 
     return {
-        "access_token": token,
-        "token_type": "bearer",
-        "role": user._mapping["role"]
-    }
+            "access_token": token,
+            "token_type": "bearer",
+            "role": role
+        }
 @app.get("/applications")
 def get_applications(
     current_user: dict = Depends(decode_token),
