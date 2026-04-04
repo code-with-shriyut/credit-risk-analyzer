@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from streamlit import user
 
 from src.schemas import LoanApplication, PredictionResponse, Token, SHAPFactor
 from src.auth import verify_password, create_access_token, decode_token
