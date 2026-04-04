@@ -45,37 +45,44 @@ This project builds a machine learning–driven credit risk assessment system th
 ## 📁 Project Structure
 ```
 credit-risk-analyzer/
-├── src/
-│   ├── main.py           # FastAPI app — all endpoints
-│   ├── auth.py           # JWT authentication
-│   ├── db.py             # Database connection (Supabase)
-│   ├── ml_model.py       # XGBoost + SHAP prediction
-│   ├── risk.py           # Rule-based engine
-│   ├── schemas.py        # Pydantic models
-│   └── decision.py       # Decision logic
-├── pages/
-│   ├── 1_Loan_Form.py    # Loan application form
-│   ├── 2_Result.py       # Prediction result + SHAP chart
-│   └── 3_Dashboard.py    # Bank manager dashboard
-├── tests/
-│   ├── test_auth.py      # Auth function tests
-│   ├── test_risk.py      # Rule engine tests
-│   └── test_ml_model.py  # Model output tests
-├── notebooks/
+├── src/                          # Backend (FastAPI)
+│   ├── main.py                   # API entry point (routes)
+│   ├── auth.py                   # JWT authentication logic
+│   ├── db.py                     # Supabase DB connection & queries
+│   ├── ml_model.py               # XGBoost model + SHAP explainability
+│   ├── risk.py                   # Rule-based risk engine
+│   ├── schemas.py                # Pydantic request/response models
+│   └── decision.py               # Final decision logic (hybrid system)
+│
+├── frontend/                     # Streamlit frontend
+│   ├── app.py                   # Login & main UI entry point
+│   ├── requirements.txt         # Frontend dependencies
+│   └── pages/                   # UI pages
+│       ├── 1_Loan_Form.py       # Loan application form
+│       ├── 2_Result.py          # Prediction result + SHAP visualization
+│       └── 3_Dashboard.py       # Loan applications dashboard
+│
+├── tests/                        # Unit tests
+│   ├── test_auth.py              # Authentication tests
+│   ├── test_risk.py              # Rule engine tests
+│   └── test_ml_model.py          # ML model tests
+│
+├── notebooks/                    # ML experimentation & development
 │   ├── 01_eda_home_credit.ipynb
 │   ├── 02_preprocessing.ipynb
 │   ├── 03_ml_model.ipynb
 │   └── 04_shap_explain.ipynb
-├── models/               # Saved model artifacts
+│
+├── models/                       # Serialized ML artifacts
 │   ├── xgb_model.pkl
 │   ├── scaler.pkl
 │   └── feature_columns.pkl
-├── app.py                # Streamlit entry point (login)
-├── requirements.txt
-└── .env                  # Environment variables (not tracked)
-```
+│
+├── requirements.txt              # Backend dependencies
+├── .env                          # Environment variables (excluded from Git)
+└── README.md
 
----
+```
 
 ## ⚙️ Setup & Installation
 
