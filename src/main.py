@@ -29,15 +29,25 @@ def health():
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = get_user(db, form_data.username)
 
-    if not user or not verify_password(form_data.password, user.hashed_password):
+    if not user or not verify_password(
+        form_data.password,
+        user._mapping["hashed_password"]
+    ):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid username or password"
         )
 
-    token = create_access_token({"sub": user.username, "role": user.role})
-    return {"access_token": token, "token_type": "bearer", "role": user.role}
+    token = create_access_token({
+        "sub": user._mapping["username"],
+        "role": user._mapping["role"]
+    })
 
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "role": user._mapping["role"]
+    }
 @app.get("/applications")
 def get_applications(
     current_user: dict = Depends(decode_token),
