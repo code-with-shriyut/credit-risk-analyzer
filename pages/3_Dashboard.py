@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 import plotly.express as px
 
-API_URL = "http://127.0.0.1:8000"
+API_URL = "API_URL=https://credit-risk-analyzer-3-nhhn.onrender.com"
 
 st.set_page_config(page_title="Dashboard", page_icon="📈", layout="wide")
 
