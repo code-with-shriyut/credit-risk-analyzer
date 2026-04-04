@@ -11,7 +11,7 @@ st.set_page_config(
 
 # redirect if already logged in
 if "token" in st.session_state:
-    st.switch_page("pages/1_Loan_Form.py")
+    st.switch_page("1_Loan_Form.py")
 
 st.title("🏦 Credit Risk Analyzer")
 st.subheader("Bank Login")
@@ -34,6 +34,6 @@ if st.button("Login", use_container_width=True):
             st.session_state["role"] = data["role"]
             st.session_state["username"] = username
             st.success("Login successful!")
-            st.switch_page("pages/1_Loan_Form.py")
+            st.switch_page("1_Loan_Form.py")
         else:
             st.error("Invalid username or password")
