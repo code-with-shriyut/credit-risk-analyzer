@@ -9,9 +9,9 @@ from dotenv import load_dotenv
 # ── Load environment variables ────────────────────────────────────────────────
 load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+SECRET_KEY = os.getenv("SECRET_KEY", "credit_risk_analyzer_secret_key_2026")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
 
 # ── Password hashing setup ────────────────────────────────────────────────────
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -22,9 +22,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 # ── Password utilities ────────────────────────────────────────────────────────
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
-
-
+    try:
+        return pwd_context.verify(plain_password, hashed_password)
+    except Exception:
+        return False
+    
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
