@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-API_URL = "API_URL=https://credit-risk-analyzer-3-nhhn.onrender.com"
+API_URL = "https://credit-risk-analyzer-3-nhhn.onrender.com"
 
 st.set_page_config(page_title="Loan Application", page_icon="📋", layout="centered")
 
