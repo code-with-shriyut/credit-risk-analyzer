@@ -32,7 +32,7 @@ else:
 col1, col2, col3 = st.columns(3)
 col1.metric("Decision", decision)
 col2.metric("Risk Category", risk)
-col3.metric("Default Probability", f"{prob*100:.1f}%")
+st.metric("Default Probability", f"{prob*100:.2f}%")
 
 st.caption(f"Application ID: {result['application_id']} | Processed by: {result['processed_by']} | {result['timestamp'][:19]}")
 

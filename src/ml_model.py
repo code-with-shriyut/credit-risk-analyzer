@@ -50,7 +50,7 @@ def predict(input_dict: dict) -> dict:
         })
 
     return {
-        "default_probability": round(prob, 4),
+        "default_probability": float(prob),
         "prediction": prediction,
         "risk_label": "HIGH RISK" if prediction == 1 else "LOW RISK",
         "shap_explanation": explanation
