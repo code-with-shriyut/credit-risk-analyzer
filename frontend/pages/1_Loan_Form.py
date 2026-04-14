@@ -44,13 +44,27 @@ with st.form("loan_form"):
             list(range(0, 12))
         )
         st.caption(f"Employment duration ≈ {years_employed} years {months_employed} months")
-        ext_source_2 = st.slider("Credit Score 1 (0-1)", 0.0, 1.0, 0.5)
-        ext_source_3 = st.slider("Credit Score 2 (0-1)", 0.0, 1.0, 0.5)
+        
 
+        ext_source_1 = st.slider(
+            "GST Compliance Score Proxy (0–1)",
+            0.0, 1.0, 0.5,
+            help="In production, computed automatically via Account Aggregator APIs"
+        )
+
+        ext_source_2 = st.slider(
+            "UPI Transaction Score Proxy (0–1)",
+            0.0, 1.0, 0.5,
+            help="In production, computed automatically via Account Aggregator APIs"
+        )
     with col4:
         flag_own_car = st.selectbox("Owns Car?", [0, 1], format_func=lambda x: "Yes" if x == 1 else "No")
         flag_own_realty = st.selectbox("Owns Property?", [0, 1], format_func=lambda x: "Yes" if x == 1 else "No")
-        ext_source_1 = st.slider("Credit Score 3 (0-1)", 0.0, 1.0, 0.5)
+        ext_source_3 = st.slider(
+            "Utility Payment Score Proxy (0–1)",
+            0.0, 1.0, 0.5,
+            help="In production, computed automatically via Account Aggregator APIs"
+        )
 
     submitted = st.form_submit_button("Submit Application", use_container_width=True)
 
