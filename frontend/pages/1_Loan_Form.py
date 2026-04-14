@@ -32,7 +32,18 @@ with st.form("loan_form"):
     col3, col4 = st.columns(2)
 
     with col3:
-        days_employed = st.number_input("Employment (days, negative = employed)", value=-1000)
+        years_employed = st.number_input(
+            "Years Employed", 
+            min_value=0, 
+            max_value=50, 
+            value=2
+        )
+
+        months_employed = st.selectbox(
+            "Additional Months", 
+            list(range(0, 12))
+        )
+        st.caption(f"Employment duration ≈ {years_employed} years {months_employed} months")
         ext_source_2 = st.slider("Credit Score 1 (0-1)", 0.0, 1.0, 0.5)
         ext_source_3 = st.slider("Credit Score 2 (0-1)", 0.0, 1.0, 0.5)
 
@@ -47,6 +58,9 @@ if submitted:
     if not full_name:
         st.error("Full name required!")
     else:
+        total_days = (years_employed * 365) + (months_employed * 30)
+        days_employed = -total_days
+
         payload = {
             "full_name": full_name,
             "gender": gender,
