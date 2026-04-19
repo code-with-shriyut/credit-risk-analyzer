@@ -24,7 +24,8 @@ with st.form("loan_form"):
         age_years = st.number_input("Age (years)", min_value=18, max_value=80, value=30)
 
     with col2:
-        amt_income = st.number_input("Annual Income (₹)", min_value=10000.0, value=300000.0, step=10000.0)
+        monthly_income = st.number_input("Monthly Income (₹)", min_value=5000.0,value=30000.0, step=1000.0)
+        existing_obligations = st.number_input("Existing Monthly Obligations(₹)", min_value = 0.0, value = 5000.0, step = 1000.0)
         amt_credit = st.number_input("Loan Amount (₹)", min_value=10000.0, value=500000.0, step=10000.0)
         amt_annuity = st.number_input("Monthly EMI (₹)", min_value=1000.0, value=25000.0, step=1000.0)
 
@@ -79,7 +80,9 @@ if submitted:
             "full_name": full_name,
             "gender": gender,
             "age_years": age_years,
-            "AMT_INCOME_TOTAL": amt_income,
+            "AMT_INCOME_TOTAL": monthly_income * 12,  # convert to annual
+            "monthly_income": monthly_income,
+            "existing_obligations": existing_obligations,
             "AMT_CREDIT": amt_credit,
             "AMT_ANNUITY": amt_annuity,
             "AMT_GOODS_PRICE": amt_credit * 0.9,

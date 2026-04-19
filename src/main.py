@@ -99,6 +99,13 @@ def predict_default(
     input_dict["AGE_YEARS"] = age_years
     input_dict["CODE_GENDER_M"] = 1 if gender == "M" else 0
 
+    monthly_income = input_dict.pop("monthly_income")
+    existing_obligations = input_dict.pop("existing_obligations")
+
+    emi = input_dict.get("AMT_ANNUITY", 0)
+
+    # FOIR calculation
+    foir = (emi + existing_obligations) / monthly_income if monthly_income > 0 else 0
     # rule engine runs first
     ext_source_avg = (
         input_dict.get("EXT_SOURCE_1", 0.5) +
@@ -109,11 +116,11 @@ def predict_default(
     rule_risk = risk_classification(
         ext_source_avg=ext_source_avg,
         days_employed=input_dict.get("DAYS_EMPLOYED", -365),
-        amt_annuity=input_dict.get("AMT_ANNUITY", 0),
+        amt_annuity=emi,
         amt_income_total=input_dict.get("AMT_INCOME_TOTAL", 1),
-        days_birth=input_dict.get("DAYS_BIRTH", -10000)
+        days_birth=input_dict.get("DAYS_BIRTH", -10000),
+        foir=foir,
     )
-
     # ml model always runs for audit + SHAP
     result = predict(input_dict)
 
@@ -126,7 +133,6 @@ def predict_default(
         decision = "APPROVED"
 
     elif rule_risk == "MEDIUM RISK":
-        # 🔥 THIS IS THE FIX
         final_risk = "MEDIUM RISK"
         decision = "APPROVED" if result["prediction"] == 0 else "REJECTED"
 
@@ -155,5 +161,6 @@ def predict_default(
         risk_category=final_risk,
         default_probability=result["default_probability"],
         processed_by=current_user["username"],
-        shap_explanation=shap_factors
+        shap_explanation=shap_factors,
+        foir=round(foir, 2),
     )

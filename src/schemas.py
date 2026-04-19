@@ -27,7 +27,8 @@ class LoanApplication(BaseModel):
     CODE_GENDER: int = Field(..., ge=0, le=1)
     FLAG_OWN_CAR: int = Field(..., ge=0, le=1)
     FLAG_OWN_REALTY: int = Field(..., ge=0, le=1)
-
+    monthly_income: float = Field(..., gt=0)
+    existing_obligations: float = Field(..., ge=0)
 class SHAPFactor(BaseModel):
     feature: str
     impact: float
@@ -41,3 +42,7 @@ class PredictionResponse(BaseModel):
     default_probability: Optional[float]
     processed_by: str
     shap_explanation: Optional[list[SHAPFactor]] = None
+    foir: float = Field(..., ge=0, le=1)
+
+
+

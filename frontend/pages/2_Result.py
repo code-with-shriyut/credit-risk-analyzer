@@ -21,6 +21,15 @@ st.divider()
 # Decision banner
 decision = result["decision"]
 risk = result["risk_category"]
+foir = result.get("foir", 0)
+
+st.metric(
+    "Debt-to-Income Ratio (FOIR)", 
+    f"{foir*100:.0f}%"
+)
+
+st.caption("Your debt-to-income ratio is within acceptable limits (RBI guideline: <50%)" if foir <= 0.5 
+else "Your debt-to-income ratio is high (RBI guideline: <50%)")
 prob = result["default_probability"]
 
 if decision == "APPROVED":

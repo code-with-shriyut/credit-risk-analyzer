@@ -3,13 +3,18 @@ def risk_classification(
     days_employed: int,
     amt_annuity: float,
     amt_income_total: float,
-    days_birth: int
+    days_birth: int,
+    foir: float = None,
 ) -> str:
     """
     Rule-based risk classification using Home Credit features.
     Acts as a secondary check alongside ML model prediction.
     Returns: LOW RISK / MEDIUM RISK / HIGH RISK
     """
+    # FOIR RULE (highest priority)
+    if foir is not None:
+        if foir > 0.5:
+            return "HIGH RISK"
     risk_points = 0
 
     # EMI ratio — annuity to income
