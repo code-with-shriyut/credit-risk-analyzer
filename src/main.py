@@ -98,7 +98,7 @@ def predict_default(
 
     input_dict["AGE_YEARS"] = age_years
     input_dict["CODE_GENDER_M"] = 1 if gender == "M" else 0
-
+    input_dict["AMT_GOODS_PRICE"] = input_dict.get("AMT_CREDIT", 0)
     monthly_income = input_dict.pop("monthly_income")
     existing_obligations = input_dict.pop("existing_obligations")
 
