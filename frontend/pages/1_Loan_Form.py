@@ -85,7 +85,7 @@ if submitted:
             "existing_obligations": existing_obligations,
             "AMT_CREDIT": amt_credit,
             "AMT_ANNUITY": amt_annuity,
-            "AMT_GOODS_PRICE": amt_credit * 0.9,
+            "AMT_GOODS_PRICE": amt_credit,
             "DAYS_BIRTH": -(age_years * 365),
             "DAYS_EMPLOYED": days_employed,
             "EXT_SOURCE_1": ext_source_1,
