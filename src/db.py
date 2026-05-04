@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, Session
+import json
 
 load_dotenv()
 
@@ -33,13 +34,14 @@ def get_user(db: Session, username: str):
 
 
 def save_loan_application(db: Session, data: dict):
+    data["reason_codes"] = json.dumps(data["reason_codes"])
     """Insert a loan application record into the database after prediction."""
     db.execute(
         text("""
             INSERT INTO loan_applications 
-            (application_id, full_name, decision, risk_category, default_probability, processed_by)
+            (application_id, full_name, decision, risk_category, default_probability, processed_by, reason_codes)
             VALUES 
-            (:application_id, :full_name, :decision, :risk_category, :default_probability, :processed_by)
+            (:application_id, :full_name, :decision, :risk_category, :default_probability, :processed_by, :reason_codes)
         """),
         data
     )

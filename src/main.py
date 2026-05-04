@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
-
+from src.explainability import get_reason_codes
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -106,6 +106,11 @@ def predict_default(
 
     # FOIR calculation
     foir = (emi + existing_obligations) / monthly_income if monthly_income > 0 else 0
+
+    rule_reasons = []
+
+    if foir > 0.5:
+        rule_reasons.append("HIGH_FOIR")
     # rule engine runs first
     ext_source_avg = (
         input_dict.get("EXT_SOURCE_1", 0.5) +
@@ -123,6 +128,8 @@ def predict_default(
     )
     # ml model always runs for audit + SHAP
     result = predict(input_dict)
+    reason_codes = get_reason_codes(result["shap_values"])
+    reason_codes = rule_reasons + reason_codes
 
     if rule_risk == "HIGH RISK":
         final_risk = "HIGH RISK"
@@ -149,7 +156,8 @@ def predict_default(
         "decision": decision,
         "risk_category": final_risk,
         "default_probability": result["default_probability"],
-        "processed_by": current_user["username"]
+        "processed_by": current_user["username"],
+        "reason_codes": reason_codes,
     })
 
     shap_factors = [SHAPFactor(**f) for f in result["shap_explanation"]]
