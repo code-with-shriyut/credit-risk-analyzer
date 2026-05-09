@@ -52,6 +52,10 @@ st.subheader("🔍 Why this decision?")
 
 shap_data = result.get("shap_explanation", [])
 
+st.subheader("Explanation")
+
+st.info(result["explanation"])
+
 if shap_data:
     features = [s["feature"] for s in shap_data]
     impacts = [s["impact"] for s in shap_data]

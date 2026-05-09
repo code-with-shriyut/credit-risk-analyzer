@@ -50,3 +50,22 @@ def reason_to_text(code: str):
     }
 
     return mapping.get(code, code.replace("_", " ").lower())
+
+def generate_explanation(reason_codes: list) -> str:
+    """
+    Convert reason codes into human-readable explanation
+    """
+
+    explanations = []
+
+    for code in reason_codes:
+        explanations.append(reason_to_text(code))
+
+    if not explanations:
+        return "No major risk indicators detected."
+
+    return (
+        "The applicant shows elevated repayment risk because "
+        + ", ".join(explanations)
+        + "."
+    )

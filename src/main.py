@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from src.explainability import get_reason_codes
+from src.explainability import get_reason_codes, generate_explanation
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -133,6 +133,7 @@ def predict_default(
     result = predict(input_dict)
     reason_codes = get_reason_codes(result["shap_values"])
     reason_codes = rule_reasons + reason_codes
+    explanation = generate_explanation(reason_codes)
 
     if rule_risk == "HIGH RISK":
         final_risk = "HIGH RISK"
@@ -173,5 +174,6 @@ def predict_default(
         default_probability=result["default_probability"],
         processed_by=current_user["username"],
         shap_explanation=shap_factors,
+        explanation=explanation,
         foir=round(foir, 2),
     )
