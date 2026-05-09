@@ -25,10 +25,12 @@ with st.form("loan_form"):
 
     with col2:
         monthly_income = st.number_input("Monthly Income (₹)", min_value=5000.0,value=30000.0, step=1000.0)
+        if monthly_income < 15000:
+            st.warning("Income below recommended eligibility threshold.")
         existing_obligations = st.number_input("Existing Monthly Obligations(₹)", min_value = 0.0, value = 5000.0, step = 1000.0)
         amt_credit = st.number_input("Loan Amount (₹)", min_value=10000.0, value=500000.0, step=10000.0)
-        amt_annuity = st.number_input("Monthly EMI (₹)", min_value=1000.0, value=25000.0, step=1000.0)
-
+        loan_tenure_months = st.number_input("Loan Tenure (Months)", min_value=6, max_value=360, value=60, step=6)
+        interest_rate = st.number_input("Annual Interest Rate (%)", min_value=1.0, max_value=30.0, value=10.0, step=0.5)
     st.subheader("Additional Details")
     col3, col4 = st.columns(2)
 
@@ -48,7 +50,7 @@ with st.form("loan_form"):
         
 
         ext_source_1 = st.slider(
-            "GST Compliance Score Proxy (0–1)",
+            "Bank Transaction stability score (0–1)",
             0.0, 1.0, 0.5,
             help="In production, computed automatically via Account Aggregator APIs"
         )
@@ -75,6 +77,20 @@ if submitted:
     else:
         total_days = (years_employed * 365) + (months_employed * 30)
         days_employed = -total_days
+
+        # EMI Calculation
+
+        monthly_rate = (interest_rate / 12) / 100
+
+        amt_annuity = (
+            amt_credit
+            * monthly_rate
+            * ((1 + monthly_rate) ** loan_tenure_months)
+        ) / (
+            ((1 + monthly_rate) ** loan_tenure_months) - 1
+        )
+        
+        st.info(f"Estimated Monthly EMI: ₹{amt_annuity:,.2f}")
 
         payload = {
             "full_name": full_name,

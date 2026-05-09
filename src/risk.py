@@ -17,6 +17,12 @@ def risk_classification(
             return "HIGH RISK"
     risk_points = 0
 
+    # Minimum income rule
+    monthly_income = amt_income_total / 12
+
+    if monthly_income < 15000:
+        risk_points += 2
+
     # EMI ratio — annuity to income
     emi_ratio = amt_annuity / amt_income_total if amt_income_total > 0 else 1.0
     if emi_ratio <= 0.25:

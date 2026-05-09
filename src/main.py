@@ -111,6 +111,9 @@ def predict_default(
 
     if foir > 0.5:
         rule_reasons.append("HIGH_FOIR")
+
+    if monthly_income < 15000:
+        rule_reasons.append("LOW_INCOME")
     # rule engine runs first
     ext_source_avg = (
         input_dict.get("EXT_SOURCE_1", 0.5) +
