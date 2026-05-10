@@ -126,33 +126,33 @@ if submitted:
         )
         
 
-    payload = {
-        "full_name": full_name,
-        "gender": gender,
-        "age_years": age_years,
-        "AMT_INCOME_TOTAL": monthly_income * 12,  # convert to annual
-        "monthly_income": monthly_income,
-        "existing_obligations": existing_obligations,
-        "AMT_CREDIT": amt_credit,
-        "AMT_ANNUITY": amt_annuity,
-        "AMT_GOODS_PRICE": amt_credit,
-        "DAYS_BIRTH": -(age_years * 365),
-        "DAYS_EMPLOYED": days_employed,
-        "EXT_SOURCE_1": ext_source_1,
-        "EXT_SOURCE_2": ext_source_2,
-        "EXT_SOURCE_3": ext_source_3,
-        "CODE_GENDER": 1 if gender == "M" else 0,
-        "FLAG_OWN_CAR": flag_own_car,
-        "FLAG_OWN_REALTY": flag_own_realty
-    }
+        payload = {
+            "full_name": full_name,
+            "gender": gender,
+            "age_years": age_years,
+            "AMT_INCOME_TOTAL": monthly_income * 12,  # convert to annual
+            "monthly_income": monthly_income,
+            "existing_obligations": existing_obligations,
+            "AMT_CREDIT": amt_credit,
+            "AMT_ANNUITY": amt_annuity,
+            "AMT_GOODS_PRICE": amt_credit,
+            "DAYS_BIRTH": -(age_years * 365),
+            "DAYS_EMPLOYED": days_employed,
+            "EXT_SOURCE_1": ext_source_1,
+            "EXT_SOURCE_2": ext_source_2,
+            "EXT_SOURCE_3": ext_source_3,
+            "CODE_GENDER": 1 if gender == "M" else 0,
+            "FLAG_OWN_CAR": flag_own_car,
+            "FLAG_OWN_REALTY": flag_own_realty
+        }
 
-    headers = {"Authorization": f"Bearer {st.session_state['token']}"}
+        headers = {"Authorization": f"Bearer {st.session_state['token']}"}
 
-    with st.spinner("Analyzing application..."):
-        response = requests.post(f"{API_URL}/predict", json=payload, headers=headers)
+        with st.spinner("Analyzing application..."):
+            response = requests.post(f"{API_URL}/predict", json=payload, headers=headers)
 
-    if response.status_code == 200:
-        st.session_state["result"] = response.json()
-        st.switch_page("pages/2_Result.py")
-    else:
-        st.error(f"Error: {response.text}")
+        if response.status_code == 200:
+            st.session_state["result"] = response.json()
+            st.switch_page("pages/2_Result.py")
+        else:
+            st.error(f"Error: {response.text}")
